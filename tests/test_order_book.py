@@ -1,4 +1,4 @@
-from OrderBook import OrderBook
+from htf_engine.order_book import OrderBook
 
 # ========================================================
 #                         TESTS
