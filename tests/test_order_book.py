@@ -47,6 +47,7 @@ print("After 1st cross:", ob.get_all_pending_orders())
 ob.add_order("limit", "sell", 42, 100)  # hits ID 1 next
 print("After 2nd cross:", ob.get_all_pending_orders())
 print(ob)
+print(ob.trade_log.retrieve_log())
 
 
 print("\n=== Test 4: Cancel order ===")
@@ -189,3 +190,4 @@ ob.add_order("limit", "sell", 1, 100)
 print(ob)
 ob.add_order("market", "sell", 100)
 print(ob)
+print(ob.trade_log.retrieve_log())

@@ -5,6 +5,7 @@ from .matchers.limit_matcher import LimitOrderMatcher
 from .matchers.market_matcher import MarketOrderMatcher
 from .orders.limit_order import LimitOrder
 from .orders.market_order import MarketOrder
+from .trades.trade_log import TradeLog
 
 
 class OrderBook:
@@ -21,6 +22,8 @@ class OrderBook:
             "limit": LimitOrderMatcher(),
             "market": MarketOrderMatcher()
         }
+
+        self.trade_log = TradeLog()
 
     def add_order(self, order_type, side, qty, price=None):
         oid = next(self.order_id_counter)
@@ -73,6 +76,15 @@ class OrderBook:
         del self.order_map[order_id]
         return True
 
+    def record_trade(self, price, qty, buy_order, sell_order, aggressor):
+        return self.trade_log.record(
+            price=price,
+            qty=qty,
+            buy_order_id=buy_order.order_id,
+            sell_order_id=sell_order.order_id,
+            aggressor=aggressor,
+        )
+    
     def __str__(self):
         bid_levels = sorted(self.bids.items(), key=lambda x: -x[0])
         ask_levels = sorted(self.asks.items(), key=lambda x: x[0])

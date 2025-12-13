@@ -24,8 +24,27 @@ class LimitOrderMatcher(Matcher):
             resting_order.qty -= traded_qty
 
             trade_price = resting_order.price
+
+            if order.is_buy_order():
+                order_book.record_trade(
+                    price=best_price,
+                    qty=traded_qty,
+                    buy_order=order,
+                    sell_order=resting_order,
+                    aggressor="buy",
+                )
+            else:
+                order_book.record_trade(
+                    price=best_price,
+                    qty=traded_qty,
+                    buy_order=resting_order,
+                    sell_order=order,
+                    aggressor="sell",
+                )
+            
             print(f"TRADE {traded_qty} @ {trade_price}")
             order_book.last_price = trade_price
+
 
             if resting_order.qty == 0:
                 # full order destroyed
