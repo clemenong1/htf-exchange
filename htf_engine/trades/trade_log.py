@@ -12,6 +12,8 @@ class TradeLog:
         self,
         price,
         qty,
+        buy_user_id,
+        sell_user_id,
         buy_order_id,
         sell_order_id,
         aggressor
@@ -23,6 +25,8 @@ class TradeLog:
             timestamp=datetime.now(timezone.utc),
             price=price,
             qty=qty,
+            buy_user_id=buy_user_id,
+            sell_user_id=sell_user_id,
             buy_order_id=buy_order_id,
             sell_order_id=sell_order_id,
             aggressor=aggressor,

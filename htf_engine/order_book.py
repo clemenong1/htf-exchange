@@ -13,7 +13,9 @@ from .trades.trade_log import TradeLog
 
 
 class OrderBook:
-    def __init__(self):
+    def __init__(self, instrument):
+        self.instrument = instrument
+
         self.bids = defaultdict(deque)
         self.asks = defaultdict(deque)
         self.order_map = {}
@@ -30,18 +32,19 @@ class OrderBook:
         }
 
         self.trade_log = TradeLog()
+        self.on_trade_callback = None  # Exchange handler!!
 
-    def add_order(self, order_type, side, qty, price=None):
+    def add_order(self, order_type, side, qty, price=None, user_id=None):
         oid = next(self.order_id_counter)
         # create order object
         if order_type == "limit":
-            order = LimitOrder(oid, side, price, qty)
+            order = LimitOrder(oid, side, price, qty, user_id)
         elif order_type == "market":
-            order = MarketOrder(oid, side, qty)
+            order = MarketOrder(oid, side, qty, user_id)
         elif order_type == "ioc":
-            order = IOCOrder(oid, side, price, qty)
+            order = IOCOrder(oid, side, price, qty, user_id)
         elif order_type == "fok":
-            order = FOKOrder(oid, side, price, qty)
+            order = FOKOrder(oid, side, price, qty, user_id)
 
         # Execute matching
         self.matchers[order_type].match(self, order)
@@ -83,13 +86,20 @@ class OrderBook:
         return True
 
     def record_trade(self, price, qty, buy_order, sell_order, aggressor):
-        return self.trade_log.record(
+        trade = self.trade_log.record(
             price=price,
             qty=qty,
+            buy_user_id=buy_order.user_id,
+            sell_user_id=sell_order.user_id,
             buy_order_id=buy_order.order_id,
             sell_order_id=sell_order.order_id,
             aggressor=aggressor,
         )
+        
+        if self.on_trade_callback:
+            self.on_trade_callback(trade)  # Notify Exchange
+        
+        return trade
     
     def __str__(self):
         bid_levels = sorted(self.bids.items(), key=lambda x: -x[0])

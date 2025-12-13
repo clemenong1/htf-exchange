@@ -6,6 +6,8 @@ class Trade:
     timestamp: datetime
     price: float
     qty: int
+    buy_user_id: str
+    sell_user_id: str
     buy_order_id: int
     sell_order_id: int
     aggressor: str
@@ -16,5 +18,5 @@ class Trade:
 
         return (
             f"{ts} | {side} {self.qty} @ {self.price} | "
-            f"buy_oid={self.buy_order_id} sell_oid={self.sell_order_id}"
+            f"buy_uid={self.buy_user_id} sell_uid={self.sell_user_id} buy_oid={self.buy_order_id} sell_oid={self.sell_order_id}"
         )
